@@ -1,14 +1,15 @@
-import checkNumInputs from "./checkNumInputs";
+import checkNumInputs from './checkNumInputs';
 
 const forms = (state) => {
-    const form = document.querySelectorAll('form');
-    const inputs = document.querySelectorAll('input');
+    const form = document.querySelectorAll('form'),
+          inputs = document.querySelectorAll('input'),
+          modalsWindow = document.querySelectorAll('[data-modal]');
 
     checkNumInputs('input[name="user_phone"]');
 
     const message = {
         loading: 'Загрузка...',
-        success: 'Спасибо! Скоро мы с Вами свяжемся',
+        success: 'Спасибо! Скоро мы с вами свяжемся',
         failure: 'Что-то пошло не так...'
     };
 
@@ -28,7 +29,7 @@ const forms = (state) => {
         });
     };
 
-    form.forEach((item) => {
+    form.forEach(item => {
         item.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -37,7 +38,8 @@ const forms = (state) => {
             item.appendChild(statusMessage);
 
             const formData = new FormData(item);
-            if (item.getAttribute('data-calc') === "end") {
+
+            if (item.getAttribute('data-calc') == "end") {
                 for (let key in state) {
                     formData.append(key, state[key]);
                 }
@@ -48,14 +50,18 @@ const forms = (state) => {
                     console.log(res);
                     statusMessage.textContent = message.success;
                 })
-                .catch(() => {
-                    statusMessage.textContent = message.failure;
-                })
+                .catch(() => statusMessage.textContent = message.failure)
                 .finally(() => {
                     clearInputs();
                     setTimeout(() => {
                         statusMessage.remove();
-                    }, 5000);
+                        modalsWindow.forEach((item) => {
+                            if (item) {
+                                item.style.display = 'none';
+                            }
+                        });
+                        document.body.style.overflow = '';
+                    }, 3000);
                 });
         });
     });
